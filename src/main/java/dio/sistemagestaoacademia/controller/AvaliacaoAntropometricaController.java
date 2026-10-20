@@ -27,4 +27,10 @@ public class AvaliacaoAntropometricaController {
                 .status(HttpStatus.CREATED)
                 .body(resposta);
     }
+    @GetMapping("/historico/{alunoId}")//Define a rota de consulta
+    public ResponseEntity<List<AvaliacaoRespostaDTO>> consultarHistorico(@PathVariable Long alunoId) {
+        List<AvaliacaoRespostaDTO> historico =avaliacaoAntropometricaService.consultarHistorico(alunoId);
+        return ResponseEntity.ok(historico);//Retorna um 200 OK se tudo estiver Ok
+    }
+
 }
