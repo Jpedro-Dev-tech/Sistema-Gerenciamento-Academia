@@ -99,4 +99,54 @@ public class AvaliacaoAntropometricaService {
 
          return resposta;
      }
+     //Metodo consltarHistorico
+    public List<AvaliacaoRespostaDTO> consultarHistorico(Long alunoId) {
+
+        // Verifica se o aluno existe
+        if (!alunoRepository.existsById(alunoId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, //se não existe retorna 404
+                    "Aluno não encontrado com ID: " + alunoId
+            );
+        }
+
+        // Busca todas as avaliações do aluno, da mais recente para a mais antiga
+        List<AvaliacaoAntropometrica> avaliacoes =
+                avaliacaoAntropometricaRepository
+                        .findByAlunoIdOrderByDataAvaliacaoDesc(alunoId);
+
+        // Converte as entidades em DTOs de resposta
+        return avaliacoes.stream().map(avaliacao -> {
+
+            AvaliacaoRespostaDTO resposta = new AvaliacaoRespostaDTO();
+
+            resposta.setId(avaliacao.getId());
+            resposta.setAlunoId(avaliacao.getAluno().getId());
+            resposta.setInstrutorId(avaliacao.getInstrutor().getId());
+            resposta.setDataAvaliacao(avaliacao.getDataAvaliacao());
+
+            resposta.setPeso(avaliacao.getPeso());
+            resposta.setAltura(avaliacao.getAltura());
+            resposta.setImc(avaliacao.getImc());
+
+            resposta.setPercentualGordura(avaliacao.getPercentualGordura());
+            resposta.setMassaMagra(avaliacao.getMassaMagra());
+
+            resposta.setDobraTriceps(avaliacao.getDobraTriceps());
+            resposta.setDobraSubescapular(avaliacao.getDobraSubescapular());
+            resposta.setDobraPeitoral(avaliacao.getDobraPeitoral());
+            resposta.setDobraAxilarMedia(avaliacao.getDobraAxilarMedia());
+            resposta.setDobraSuprailiaca(avaliacao.getDobraSuprailiaca());
+            resposta.setDobraAbdominal(avaliacao.getDobraAbdominal());
+            resposta.setDobraCoxa(avaliacao.getDobraCoxa());
+
+            resposta.setCircCintura(avaliacao.getCircCintura());
+            resposta.setCircQuadril(avaliacao.getCircQuadril());
+            resposta.setCircBraco(avaliacao.getCircBraco());
+            resposta.setCircCoxa(avaliacao.getCircCoxa());
+
+            return resposta;
+
+        }).toList();
+    }
 }
