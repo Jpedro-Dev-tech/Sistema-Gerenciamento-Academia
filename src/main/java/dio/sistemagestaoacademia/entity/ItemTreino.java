@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "itens_treino")
 @Getter
@@ -26,13 +24,13 @@ public class ItemTreino {
     private int series;
     @Column(name = "repeticoes", nullable = false)
     private int repeticoes;
-    @Column(name = "carga", precision = 6, scale = 2)
-    private BigDecimal carga;
+    @Column(name = "carga")
+    private Double carga;
     private String observacoes;
     @Column(name = "concluido", nullable = false)
     private Boolean concluido = false;
 
-    public ItemTreino(Treino treino, Exercicio exercicio, int ordem, int series, int repeticoes, String observacoes, BigDecimal carga, Boolean concluido) {
+    public ItemTreino(Treino treino, Exercicio exercicio, int ordem, int series, int repeticoes, String observacoes, Double carga, Boolean concluido) {
         this.treino = treino;
         this.exercicio = exercicio;
         this.ordem = ordem;
