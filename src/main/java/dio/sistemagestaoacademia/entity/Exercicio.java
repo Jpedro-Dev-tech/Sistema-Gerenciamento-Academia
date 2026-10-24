@@ -15,13 +15,13 @@ public class Exercicio {
     @Column(name = "nome", nullable = false, length = 150)
     private String nome;
     @Column(name = "grupo_muscular", nullable = false, length = 150)
-    private String grupo_Muscular;
+    private String grupoMuscular;
     @Column(name = "descricao", columnDefinition = "TEXT")
     private String descricao;
 
-    public Exercicio(String nome, String grupo_Muscular, String descricao) {
+    public Exercicio(String nome, String grupoMuscular, String descricao) {
         this.nome = nome;
-        this.grupo_Muscular = grupo_Muscular;
+        this.grupoMuscular = grupoMuscular;
         this.descricao = descricao;
     }
     public Exercicio() {

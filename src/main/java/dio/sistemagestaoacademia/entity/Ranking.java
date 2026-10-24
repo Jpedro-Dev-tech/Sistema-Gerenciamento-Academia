@@ -14,7 +14,7 @@ public class Ranking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "periodo", nullable = false, length = 20)
+    @Column(name = "periodo", nullable = false, length = 20) //Mapeamento
     private String periodo;
     @Column(name = "data_inicio", nullable = false)
     private LocalDate dataInicio;

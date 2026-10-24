@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class AvaliacaoAntropometricaService {
     private final AlunoRepository alunoRepository;
@@ -26,6 +28,7 @@ public class AvaliacaoAntropometricaService {
         this.alunoRepository = alunoRepository;
         this.instrutorRepository = instrutorRepository;
     }
+    //Método registrarAvaliçao
      public AvaliacaoRespostaDTO registrarAvaliacao(AvaliacaoCadastroDTO dto) {
         Aluno aluno = alunoRepository.findById(dto.getAlunoId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Aluno não encontrado com ID: " + dto.getAlunoId()));
 
