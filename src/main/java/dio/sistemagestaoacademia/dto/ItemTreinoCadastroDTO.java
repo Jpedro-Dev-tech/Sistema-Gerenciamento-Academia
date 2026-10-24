@@ -11,5 +11,6 @@ public class ItemTreinoCadastroDTO {
     private int ordem;
     private int series;
     private Double carga;
-    private String observacao;
+    private String observacoes;
+    private int repeticoes;
 }
