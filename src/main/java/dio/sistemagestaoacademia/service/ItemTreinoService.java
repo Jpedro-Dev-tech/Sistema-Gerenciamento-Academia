@@ -1,6 +1,7 @@
 package dio.sistemagestaoacademia.service;
 
 import dio.sistemagestaoacademia.dto.ItemTreinoCadastroDTO;
+import dio.sistemagestaoacademia.dto.ItemTreinoRespostaDTO;
 import dio.sistemagestaoacademia.entity.Exercicio;
 import dio.sistemagestaoacademia.entity.ItemTreino;
 import dio.sistemagestaoacademia.entity.Treino;
@@ -8,6 +9,8 @@ import dio.sistemagestaoacademia.repository.ExercicioRepository;
 import dio.sistemagestaoacademia.repository.ItemTreinoRepository;
 import dio.sistemagestaoacademia.repository.TreinoRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,14 +25,26 @@ public class ItemTreinoService {
        this.exercicioRepository = exercicioRepository;
        this.treinoRepository = treinoRepository;
     }
-    public ItemTreino adicionarExercicio(ItemTreinoCadastroDTO dto) {
+    public ItemTreinoRespostaDTO adicionarExercicio(ItemTreinoCadastroDTO dto) {
 
         Treino treino = treinoRepository.findById(dto.getTreinoId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Treino não encontrado com ID: " + dto.getTreinoId()
                 ));
+        // Identifica o usuário autenticado
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
+        String emailInstrutor = authentication.getName();
+
+// Verifica se o instrutor autenticado é responsável pelo treino
+        if (!treino.getInstrutor().getEmail().equals(emailInstrutor)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Você não tem permissão para adicionar exercícios a este treino."
+            );
+        }
         Exercicio exercicio = exercicioRepository.findById(dto.getExercicioId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -47,6 +62,19 @@ public class ItemTreinoService {
                 false
         );
 
-        return itemTreinoRepository.save(itemTreino);
+        ItemTreino itemSalvo = itemTreinoRepository.save(itemTreino);
+
+        return new ItemTreinoRespostaDTO(
+                itemSalvo.getId(),
+                treino.getId(),
+                exercicio.getId(),
+                exercicio.getNome(),
+                itemSalvo.getOrdem(),
+                itemSalvo.getSeries(),
+                itemSalvo.getRepeticoes(),
+                itemSalvo.getCarga(),
+                itemSalvo.getObservacoes(),
+                itemSalvo.getConcluido()
+        );
     }
 }
