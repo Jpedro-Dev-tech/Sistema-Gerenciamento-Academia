@@ -77,4 +77,30 @@ public class ItemTreinoService {
                 itemSalvo.getConcluido()
         );
     }
+    public void removerExercicio(Long id) {
+
+        // Busca o item de treino pelo ID
+        ItemTreino itemTreino = itemTreinoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Item de treino não encontrado com ID: " + id
+                ));
+
+        // Identifica o instrutor autenticado
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String emailInstrutor = authentication.getName();
+
+        // Verifica se o instrutor é responsável pelo treino
+        if (!itemTreino.getTreino().getInstrutor().getEmail().equals(emailInstrutor)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Você não tem permissão para remover exercícios deste treino."
+            );
+        }
+
+        // Remove somente o item de treino
+        itemTreinoRepository.delete(itemTreino);
+    }
 }

@@ -12,8 +12,8 @@ public class ItemTreino {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "treino_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY) // Carregamento preguiçoso.Ao buscar entidade no banco.
+    @JoinColumn(name = "treino_id", nullable = false) //@JoinColumn(name = "treino_id"): define a coluna de chave estrangeira (FK) na tabela desta entidade.
     private Treino treino;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercicio_id", nullable = false)
