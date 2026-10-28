@@ -14,6 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service //Informa ao Spring Boot que essa classe pertence à camada de regras de negócio.
 public class ItemTreinoService {
     private final ItemTreinoRepository itemTreinoRepository;
@@ -102,5 +105,48 @@ public class ItemTreinoService {
 
         // Remove somente o item de treino
         itemTreinoRepository.delete(itemTreino);
+    }
+    public List<ItemTreinoRespostaDTO> listarExerciciosPorTreino(Long treinoId) {
+
+        // Verifica se o treino existe
+        Treino treino = treinoRepository.findById(treinoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Treino não encontrado com ID: " + treinoId
+                ));
+
+        // Identifica o instrutor autenticado
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String emailInstrutor = authentication.getName();
+
+        // Verifica se o instrutor é responsável pelo treino
+        if (!treino.getInstrutor().getEmail().equals(emailInstrutor)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Você não tem permissão para consultar os exercícios deste treino."
+            );
+        }
+
+        // Busca os itens associados ao treino
+        List<ItemTreino> itens =
+                itemTreinoRepository.findByTreinoIdOrderByOrdemAsc(treinoId);
+
+        // Converte os itens para DTOs de resposta
+        return itens.stream()
+                .map(item -> new ItemTreinoRespostaDTO(
+                        item.getId(),
+                        item.getTreino().getId(),
+                        item.getExercicio().getId(),
+                        item.getExercicio().getNome(),
+                        item.getOrdem(),
+                        item.getSeries(),
+                        item.getRepeticoes(),
+                        item.getCarga(),
+                        item.getObservacoes(),
+                        item.getConcluido()
+                ))
+                .collect(Collectors.toList());
     }
 }
