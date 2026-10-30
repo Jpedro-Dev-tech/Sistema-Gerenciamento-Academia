@@ -34,3 +34,11 @@ public class InstrutorUserDetailsService implements UserDetailsService {
                 .build();
     }
 }
+/**
+ * | Código               | Função                                        |
+ * | -------------------- | --------------------------------------------- |
+ * | `username()`         | Identifica o instrutor pelo e-mail            |
+ * | `password()`         | Utiliza o hash da senha armazenada            |
+ * | `roles("INSTRUTOR")` | Define o perfil do usuário                    |
+ * | `disabled()`         | Impede a autenticação de instrutores inativos |
+ */

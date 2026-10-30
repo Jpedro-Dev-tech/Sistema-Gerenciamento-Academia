@@ -25,10 +25,9 @@ public class ItemTreinoController {
         itemTreinoService.removerExercicio(id);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/treino/{treinoId}")
-    public ResponseEntity<List<ItemTreinoRespostaDTO>> listarExerciciosPorTreino(
-            @PathVariable Long treinoId) {
-        List<ItemTreinoRespostaDTO> resposta = itemTreinoService.listarExerciciosPorTreino(treinoId);
+    @GetMapping("/treino/{treinoId}")//Define o endpoint que utilizaremos para consultar os exercícios de um treino.
+    public ResponseEntity<List<ItemTreinoRespostaDTO>> listarExerciciosPorTreino(@PathVariable Long treinoId) { //@PathVariable captura o ID
+        List<ItemTreinoRespostaDTO> resposta = itemTreinoService.listarExerciciosPorTreino(treinoId);//Retorna uma lista
         return ResponseEntity.ok(resposta);
     }
 }

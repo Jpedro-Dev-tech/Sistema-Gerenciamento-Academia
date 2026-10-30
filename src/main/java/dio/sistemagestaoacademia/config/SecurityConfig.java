@@ -25,3 +25,11 @@ public class SecurityConfig {
         return http.build();
     }
 }
+/**
+ * | Configuração                   | Significado                                          |
+ * | ------------------------------ | ---------------------------------------------------- |
+ * | `POST /api/alunos`             | Permite cadastrar alunos sem autenticação            |
+ * | `POST /api/instrutores/login`  | Permite acessar o endpoint de login sem autenticação |
+ * | `anyRequest().authenticated()` | Exige autenticação nas demais requisições            |
+ * | `httpBasic()`                  | Habilita autenticação HTTP Basic                     |
+ */

@@ -5,11 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration
+@Configuration//identifica a classe como responsável por configurações do Spring.
 public class PasswordConfig {
 
-    @Bean
+    @Bean //disponibiliza o PasswordEncoder para outras classes.
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); //utiliza o algoritmo BCrypt para gerar e verificar hashes de senhas.
     }
 }
