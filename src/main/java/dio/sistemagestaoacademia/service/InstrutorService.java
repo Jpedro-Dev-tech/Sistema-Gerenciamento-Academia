@@ -3,6 +3,7 @@ package dio.sistemagestaoacademia.service;
 import dio.sistemagestaoacademia.dto.InstrutorCadastroDTO;
 import dio.sistemagestaoacademia.dto.InstrutorRespostaDTO;
 import dio.sistemagestaoacademia.entity.Instrutor;
+import dio.sistemagestaoacademia.repository.AlunoRepository;
 import dio.sistemagestaoacademia.repository.InstrutorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,10 +16,12 @@ import java.util.Optional;
 public class InstrutorService {
     private final InstrutorRepository instrutorRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AlunoRepository alunoRepository;
 
-    public InstrutorService(InstrutorRepository instrutorRepository, PasswordEncoder passwordEncoder) {
+    public InstrutorService(InstrutorRepository instrutorRepository, PasswordEncoder passwordEncoder, AlunoRepository alunoRepository) {
         this.instrutorRepository = instrutorRepository;
         this.passwordEncoder = passwordEncoder;
+        this.alunoRepository = alunoRepository;
     }
     public InstrutorRespostaDTO cadastrarInstrutor(InstrutorCadastroDTO dto) { //recebe os dados do cadastro, cria a entidade e salva o instrutor.
         if (instrutorRepository.existsByEmail(dto.getEmail())) {
