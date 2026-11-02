@@ -24,7 +24,7 @@ public class InstrutorService {
         this.alunoRepository = alunoRepository;
     }
     public InstrutorRespostaDTO cadastrarInstrutor(InstrutorCadastroDTO dto) { //recebe os dados do cadastro, cria a entidade e salva o instrutor.
-        if (instrutorRepository.existsByEmail(dto.getEmail())) {
+        if (instrutorRepository.existsByEmail(dto.getEmail()) || alunoRepository.existsByEmail(dto.getEmail())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Este e-mail já está cadastrado por outro instrutor."
