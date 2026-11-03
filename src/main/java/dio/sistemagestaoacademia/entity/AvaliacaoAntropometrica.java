@@ -78,7 +78,7 @@ public class AvaliacaoAntropometrica {
 
     @Column(name = "circ_coxa", precision = 4, scale = 1)
     private BigDecimal circCoxa;
-    
+
     @Column(name = "observacoes", columnDefinition = "TEXT")
     private String observacoes;
 
@@ -99,6 +99,7 @@ public class AvaliacaoAntropometrica {
     }
     public BigDecimal calcularIMC() {
         if (peso == null || altura == null ||
+                peso.compareTo(BigDecimal.ZERO) <= 0 ||
                 altura.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalStateException(
                     "Peso e altura válidos são necessários para calcular o IMC."
