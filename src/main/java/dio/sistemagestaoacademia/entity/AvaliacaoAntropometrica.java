@@ -78,6 +78,9 @@ public class AvaliacaoAntropometrica {
 
     @Column(name = "circ_coxa", precision = 4, scale = 1)
     private BigDecimal circCoxa;
+    
+    @Column(name = "observacoes", columnDefinition = "TEXT")
+    private String observacoes;
 
 
     public AvaliacaoAntropometrica() {
