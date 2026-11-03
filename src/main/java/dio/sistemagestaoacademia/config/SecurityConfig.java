@@ -1,5 +1,6 @@
 package dio.sistemagestaoacademia.config;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,7 +17,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/alunos").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/instrutores").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/instrutores/login").permitAll()
                         .anyRequest().authenticated()
                 )

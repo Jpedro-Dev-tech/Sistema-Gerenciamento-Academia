@@ -4,21 +4,24 @@ import dio.sistemagestaoacademia.dto.AlunoAtualizacaoDTO;
 import dio.sistemagestaoacademia.dto.AlunoCadastroDTO;
 import dio.sistemagestaoacademia.entity.Aluno;
 import dio.sistemagestaoacademia.repository.AlunoRepository;
+import dio.sistemagestaoacademia.repository.InstrutorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import dio.sistemagestaoacademia.dto.AlunoRespostaDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AlunoService {
     private final AlunoRepository alunoRepository;
     private final PasswordEncoder passwordEncoder;
-    public AlunoService(AlunoRepository alunoRepository, PasswordEncoder passwordEncoder) {
-        this.alunoRepository = alunoRepository; //Responsável por interagir com o banco de dados para realizar operações relacionadas aos alunos
-        this.passwordEncoder = passwordEncoder; //Responsável por criptografar a senha do aluno antes de salvar no banco de dados
+    private final InstrutorRepository instrutorRepository;
+
+    public AlunoService(AlunoRepository alunoRepository, PasswordEncoder passwordEncoder, InstrutorRepository instrutorRepository) {
+        this.alunoRepository = alunoRepository; //Responsável por interagir com o banco de dados para realizar operações relacionadas aos alunos.
+        this.passwordEncoder = passwordEncoder; //Responsável por criptografar a senha do aluno antes de salvar no banco de dados.
+        this.instrutorRepository = instrutorRepository;
     }
     private AlunoRespostaDTO converterParaDTO(Aluno aluno) {
 
@@ -54,8 +57,8 @@ public class AlunoService {
                .toList(); //cria uma lista e retorna os resultado
     }
     public AlunoRespostaDTO cadastrarAluno(AlunoCadastroDTO dto) {
-        if (alunoRepository.existsByEmail(dto.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Já existe um aluno cadastrado com o e-mail: " + dto.getEmail()
+        if (alunoRepository.existsByEmail(dto.getEmail()) || instrutorRepository.existsByEmail(dto.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Este e-mail já está cadastrado no sistema: " + dto.getEmail()
             ); //interrompe a execução do método e lança uma exceção
         }
         Aluno aluno = new Aluno();
@@ -77,11 +80,13 @@ public class AlunoService {
         }
         alunoRepository.deleteById(id);
     }
+    // Verifica se o e-mail pertence a outro aluno ou a um instrutor
     public AlunoRespostaDTO atualizarAluno(Long id, AlunoAtualizacaoDTO dto) {
        Aluno alunoExistente = alunoRepository.findById(id).orElseThrow((
 ) -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Aluno não encontrado com ID: " + id));
-       if (alunoRepository.existsByEmailAndIdNot(dto.getEmail(), id)) {
-           throw new ResponseStatusException(HttpStatus.CONFLICT, "Este e-mail já está cadastrado por outro aluno.");
+       if (alunoRepository.existsByEmailAndIdNot(dto.getEmail(), id)
+       || instrutorRepository.existsByEmail(dto.getEmail())) {
+           throw new ResponseStatusException(HttpStatus.CONFLICT, "Este e-mail já está cadastrado no sistema.");
        }
             alunoExistente.setNome(dto.getNome());
             alunoExistente.setEmail(dto.getEmail());

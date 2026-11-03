@@ -5,6 +5,7 @@ import dio.sistemagestaoacademia.dto.InstrutorRespostaDTO;
 import dio.sistemagestaoacademia.entity.Instrutor;
 import dio.sistemagestaoacademia.repository.AlunoRepository;
 import dio.sistemagestaoacademia.repository.InstrutorRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,16 +19,23 @@ public class InstrutorService {
     private final PasswordEncoder passwordEncoder;
     private final AlunoRepository alunoRepository;
 
+    @Value("${academia.instrutor.codigo-autorizacao}")
+    private String codigoAutorizacao;
+
     public InstrutorService(InstrutorRepository instrutorRepository, PasswordEncoder passwordEncoder, AlunoRepository alunoRepository) {
         this.instrutorRepository = instrutorRepository;
         this.passwordEncoder = passwordEncoder;
         this.alunoRepository = alunoRepository;
     }
     public InstrutorRespostaDTO cadastrarInstrutor(InstrutorCadastroDTO dto) { //recebe os dados do cadastro, cria a entidade e salva o instrutor.
+        if (!codigoAutorizacao.equals(dto.getCodigoAutorizacao())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Código de autorização inválido.");
+        }
+        // Verifica se o e-mail já está cadastrado como aluno ou instrutor
         if (instrutorRepository.existsByEmail(dto.getEmail()) || alunoRepository.existsByEmail(dto.getEmail())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Este e-mail já está cadastrado por outro instrutor."
+                    "Este e-mail já está cadastrado no sistema."
             );
         }
         Instrutor instrutor = new Instrutor();
