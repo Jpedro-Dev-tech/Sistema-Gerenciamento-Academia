@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("api/treinos")
 @RestController
 public class TreinoController {
@@ -27,5 +29,10 @@ public class TreinoController {
     public ResponseEntity<TreinoRespostaDTO> alterarTreino(@PathVariable Long id, @Valid @RequestBody TreinoAtualizacaoDTO dto){
         TreinoRespostaDTO treino = treinoService.alterarTreino(id, dto);
         return ResponseEntity.ok(treino);
+    }
+    @GetMapping("/meus-treinos")//Define uma rota HTTP para consultar os treinos do aluno autenticado.
+    public ResponseEntity<List<TreinoRespostaDTO>> visualizarTreino() {
+        List<TreinoRespostaDTO> treinos = treinoService.visualizarTreino();
+        return ResponseEntity.ok(treinos);
     }
 }

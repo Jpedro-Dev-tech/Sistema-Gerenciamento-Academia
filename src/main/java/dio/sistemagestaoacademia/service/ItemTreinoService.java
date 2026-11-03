@@ -115,14 +115,32 @@ public class ItemTreinoService {
                         "Treino não encontrado com ID: " + treinoId
                 ));
 
-        // Identifica o instrutor autenticado
+        // Identifica o usuário autenticado
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        String emailInstrutor = authentication.getName();
+        String emailUsuario = authentication.getName();
 
-        // Verifica se o instrutor é responsável pelo treino
-        if (!treino.getInstrutor().getEmail().equals(emailInstrutor)) {
+// Verifica se o usuário possui o perfil ALUNO
+        boolean ehAluno = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ALUNO"));
+
+// Verifica se o usuário possui o perfil INSTRUTOR
+        boolean ehInstrutor = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_INSTRUTOR"));
+
+// Verifica se o aluno autenticado é proprietário do treino
+        boolean alunoResponsavel = ehAluno &&
+                treino.getAluno().getEmail().equals(emailUsuario);
+
+// Verifica se o instrutor autenticado é responsável pelo treino
+        boolean instrutorResponsavel = ehInstrutor &&
+                treino.getInstrutor().getEmail().equals(emailUsuario);
+
+// Bloqueia usuários que não possuem permissão
+        if (!alunoResponsavel && !instrutorResponsavel) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "Você não tem permissão para consultar os exercícios deste treino."
