@@ -152,4 +152,36 @@ public class AvaliacaoAntropometricaService {
 
         }).toList();
     }
+    // Método consultarAvaliacoes - Aluno
+    public List<AvaliacaoRespostaDTO> consultarAvaliacoes() {
+
+        // 1. Identifica o usuário autenticado
+        var authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        // 2. Verifica se o usuário possui o perfil ALUNO
+        boolean ehAluno = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ALUNO"));
+
+        if (!ehAluno) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Somente alunos podem consultar suas avaliações."
+            );
+        }
+
+        // 3. Obtém o e-mail do aluno autenticado
+        String emailAluno = authentication.getName();
+
+        // 4. Busca o aluno no PostgreSQL
+        Aluno aluno = alunoRepository.findByEmail(emailAluno)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Aluno autenticado não encontrado."
+                ));
+
+        // 5. Consulta o histórico do próprio aluno
+        return consultarHistorico(aluno.getId());
+    }
 }

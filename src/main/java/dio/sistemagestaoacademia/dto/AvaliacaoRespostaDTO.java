@@ -29,6 +29,7 @@ public class AvaliacaoRespostaDTO {
     private BigDecimal circQuadril;
     private BigDecimal circBraco;
     private BigDecimal circCoxa;
+    private String observacoes;
 
 }
 /**
