@@ -30,4 +30,9 @@ public class ItemTreinoController {
         List<ItemTreinoRespostaDTO> resposta = itemTreinoService.listarExerciciosPorTreino(treinoId);//Retorna uma lista
         return ResponseEntity.ok(resposta);
     }
+    @PatchMapping("/{id}/concluir")
+    public ResponseEntity<Void> marcarExercicioConcluido(@PathVariable Long id) {
+        itemTreinoService.marcarExercicioConcluido(id);
+        return ResponseEntity.noContent().build();
+    }
 }

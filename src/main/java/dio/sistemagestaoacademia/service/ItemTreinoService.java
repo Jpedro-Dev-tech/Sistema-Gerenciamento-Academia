@@ -149,4 +149,45 @@ public class ItemTreinoService {
                 ))
                 .collect(Collectors.toList());
     }
+    public void marcarExercicioConcluido(Long itemTreinoId) {
+
+        // Busca o item de treino pelo ID
+        ItemTreino itemTreino = itemTreinoRepository.findById(itemTreinoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Item de treino não encontrado com ID: " + itemTreinoId
+                ));
+
+        // Identifica o usuário autenticado
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        // Verifica se o usuário possui o perfil ALUNO
+        boolean ehAluno = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ALUNO"));
+
+        if (!ehAluno) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Somente alunos podem marcar exercícios como concluídos."
+            );
+        }
+
+        String emailAluno = authentication.getName();
+
+        // Verifica se o item pertence ao treino do aluno autenticado
+        if (!itemTreino.getTreino().getAluno().getEmail().equals(emailAluno)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Você não tem permissão para concluir exercícios de outro aluno."
+            );
+        }
+
+        // Marca o exercício como concluído
+        itemTreino.setConcluido(true);
+
+        // Salva a alteração no PostgreSQL
+        itemTreinoRepository.save(itemTreino);
+    }
 }
