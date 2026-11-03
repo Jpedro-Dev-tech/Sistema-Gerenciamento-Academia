@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TreinoService {
@@ -123,5 +124,56 @@ public class TreinoService {
         resposta.setAtivo(treinoAtualizado.getAtivo());
 
         return resposta;
+    }
+    public List<TreinoRespostaDTO> visualizarTreino() {
+
+        // Identifica o usuário autenticado
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        // Verifica se o usuário possui o perfil ALUNO
+        boolean ehAluno = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ALUNO"));
+
+        if (!ehAluno) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Somente alunos podem visualizar seus treinos."
+            );
+        }
+
+        // Obtém o e-mail do aluno autenticado
+        String emailAluno = authentication.getName();
+
+        // Busca o aluno no PostgreSQL
+        Aluno aluno = alunoRepository.findByEmail(emailAluno)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Aluno autenticado não encontrado."
+                ));
+
+        // Busca somente os treinos pertencentes ao aluno
+        List<Treino> treinos = treinoRepository.findByAlunoId(aluno.getId());
+
+        // Converte os treinos encontrados para DTOs de resposta
+        return treinos.stream()
+                .map(treino -> {
+
+                    TreinoRespostaDTO resposta = new TreinoRespostaDTO();
+
+                    resposta.setId(treino.getId());
+                    resposta.setAlunoId(treino.getAluno().getId());
+                    resposta.setInstrutorId(treino.getInstrutor().getId());
+                    resposta.setNome(treino.getNome());
+                    resposta.setDescricao(treino.getDescricao());
+                    resposta.setDiaDaSemana(treino.getDiaDaSemana());
+                    resposta.setDataCriacao(treino.getDataCriacao());
+                    resposta.setDataAtualizacao(treino.getDataAtualizacao());
+                    resposta.setAtivo(treino.getAtivo());
+
+                    return resposta;
+                })
+                .toList();
     }
 }
