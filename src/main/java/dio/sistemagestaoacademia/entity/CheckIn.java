@@ -6,8 +6,15 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "check_ins")
-@Getter
+@Table(
+        name = "check_ins",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_checkin_aluno_data",
+                        columnNames = {"aluno_id", "data"}
+                )
+        }
+)@Getter
 @Setter
 public class CheckIn {
     @Id

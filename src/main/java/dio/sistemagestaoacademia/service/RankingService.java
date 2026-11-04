@@ -79,8 +79,8 @@ public class RankingService {
             resultado.get(i).setPosicao(posicaoAtual);
             pontuacaoAnterior = pontuacaoAtual;
             /**
-             * Esse trecho do codigo faz o segunte, compara a pontuação de cada aluno com a do aluno anterior
-             * se a pontuação for diferente, defne uma nova posição.
+             * Esse trecho do codigo faz o seguinte, compara a pontuação de cada aluno com a do aluno anterior
+             * se a pontuação for diferente, define uma nova posição.
              * se a pontuação for igual, mantém a mesma posição.
              */
         }
