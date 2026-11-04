@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface CheckInRepository extends JpaRepository<CheckIn, Long> {
     List<CheckIn> findByDataBetween(LocalDate dataInicio, LocalDate dataFim);
+    // Verifica se o aluno já realizou um check-in na data informada.
+    boolean existsByAlunoIdAndData(Long alunoId, LocalDate data);
     /**
      * Busca os check-ins realizados entre duas datas.
      *
