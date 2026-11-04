@@ -30,5 +30,13 @@ public class AvaliacaoAntropometricaController {
         List<AvaliacaoRespostaDTO> historico =avaliacaoAntropometricaService.consultarHistorico(alunoId);
         return ResponseEntity.ok(historico);//Retorna um 200 OK se tudo estiver Ok
     }
-
+    // Permite ao aluno autenticado consultar suas próprias avaliações
+    @GetMapping("/minhas-avaliacoes")
+    public ResponseEntity<List<AvaliacaoRespostaDTO>> consultarAvaliacoes() {
+        // Chama o Service para buscar as avaliações do aluno autenticado
+        List<AvaliacaoRespostaDTO> avaliacoes =
+                avaliacaoAntropometricaService.consultarAvaliacoes();
+        // Retorna HTTP 200 OK com a lista de avaliações
+        return ResponseEntity.ok(avaliacoes);
+    }
 }
