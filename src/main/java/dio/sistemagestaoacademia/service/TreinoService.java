@@ -57,6 +57,7 @@ public class TreinoService {
         treino.setInstrutor(instrutor);
         treino.setNome(dto.getNome());
         treino.setDescricao(dto.getDescricao());
+        treino.setObjetivo(dto.getObjetivo());
         treino.setDiaDaSemana(dto.getDiaDaSemana());
         treino.setDataCriacao(LocalDateTime.now());
         treino.setDataAtualizacao(null);
@@ -72,6 +73,7 @@ public class TreinoService {
         resposta.setNome(treinoSalvo.getNome());
         resposta.setDescricao(treinoSalvo.getDescricao());
         resposta.setDiaDaSemana(treinoSalvo.getDiaDaSemana());
+        resposta.setObjetivo(treinoSalvo.getObjetivo());
         resposta.setDataCriacao(treinoSalvo.getDataCriacao());
         resposta.setDataAtualizacao(treinoSalvo.getDataAtualizacao());
         resposta.setAtivo(treinoSalvo.getAtivo());
@@ -102,6 +104,7 @@ public class TreinoService {
         // Atualiza os dados do treino
         treino.setNome(dto.getNome());
         treino.setDescricao(dto.getDescricao());
+        treino.setObjetivo(dto.getObjetivo());
         treino.setDiaDaSemana(dto.getDiaDaSemana());
 
         // Registra a data e o horário da atualização
