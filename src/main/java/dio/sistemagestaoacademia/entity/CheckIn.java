@@ -27,11 +27,15 @@ public class CheckIn {
     private LocalDate data;
     @Column(name = "pontos", nullable = false)
     private int pontos;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "treino_id", nullable = false)
+    private Treino treino;
 
-    public CheckIn(Aluno aluno, LocalDate data, int pontos) {
+    public CheckIn(Aluno aluno, LocalDate data, int pontos, Treino treino) {
         this.aluno = aluno;
         this.data = data;
         this.pontos = pontos;
+        this.treino = treino;
     }
 
     public CheckIn() {

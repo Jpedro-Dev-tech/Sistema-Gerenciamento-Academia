@@ -1,6 +1,4 @@
 package dio.sistemagestaoacademia.controller;
-
-import dio.sistemagestaoacademia.repository.CheckInRepository;
 import dio.sistemagestaoacademia.service.CheckInService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +14,7 @@ public class CheckInController {
     public CheckInController (CheckInService checkInService) {
         this.checkInService = checkInService;
     }
-    @PostMapping
+    @PostMapping("/treino/{treinoId}")
     public ResponseEntity<Void> registrarCheckin(@PathVariable Long treinoId) {
         checkInService.registrarCheckIn(treinoId);
         return ResponseEntity.noContent().build();

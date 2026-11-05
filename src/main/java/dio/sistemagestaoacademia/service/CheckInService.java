@@ -109,7 +109,7 @@ public class CheckInService {
         }
 
         // 8. Criar o check-in com exatamente 1 ponto (RN08).
-        CheckIn checkIn = new CheckIn(aluno, hoje, 1);
+        CheckIn checkIn = new CheckIn(aluno, hoje, 1, treino);
 
         checkInRepository.save(checkIn);
 
