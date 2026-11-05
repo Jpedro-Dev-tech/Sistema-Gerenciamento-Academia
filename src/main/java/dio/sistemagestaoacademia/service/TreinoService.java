@@ -122,6 +122,7 @@ public class TreinoService {
         resposta.setNome(treinoAtualizado.getNome());
         resposta.setDescricao(treinoAtualizado.getDescricao());
         resposta.setDiaDaSemana(treinoAtualizado.getDiaDaSemana());
+        resposta.setObjetivo(treinoAtualizado.getObjetivo());
         resposta.setDataCriacao(treinoAtualizado.getDataCriacao());
         resposta.setDataAtualizacao(treinoAtualizado.getDataAtualizacao());
         resposta.setAtivo(treinoAtualizado.getAtivo());
@@ -170,6 +171,7 @@ public class TreinoService {
                     resposta.setInstrutorId(treino.getInstrutor().getId());
                     resposta.setNome(treino.getNome());
                     resposta.setDescricao(treino.getDescricao());
+                    resposta.setObjetivo(treino.getObjetivo());
                     resposta.setDiaDaSemana(treino.getDiaDaSemana());
                     resposta.setDataCriacao(treino.getDataCriacao());
                     resposta.setDataAtualizacao(treino.getDataAtualizacao());
