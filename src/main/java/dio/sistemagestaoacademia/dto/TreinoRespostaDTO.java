@@ -18,4 +18,5 @@ public class TreinoRespostaDTO {
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
     private Boolean ativo;
+    private String objetivo;
 }

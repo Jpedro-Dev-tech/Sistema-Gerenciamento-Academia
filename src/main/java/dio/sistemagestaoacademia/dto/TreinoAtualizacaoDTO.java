@@ -13,6 +13,7 @@ public class TreinoAtualizacaoDTO {
     private String nome;
     private String descricao;
     private String diaDaSemana;
+    private String objetivo;
 
 }
 /**
