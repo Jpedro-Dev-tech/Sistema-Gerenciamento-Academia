@@ -15,6 +15,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
+import dio.sistemagestaoacademia.entity.ItemTreino;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+
+import java.io.ByteArrayOutputStream;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -183,5 +195,157 @@ public class TreinoService {
                     return resposta;
                 })
                 .toList();
+    }
+    @Transactional(readOnly = true)
+    public byte[] gerarFichaPDF(Long treinoId) {
+
+        // Busca o treino no PostgreSQL
+        Treino treino = treinoRepository.findById(treinoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Treino não encontrado com ID: " + treinoId
+                ));
+
+        // Identifica o usuário autenticado
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String emailUsuario = authentication.getName();
+
+        // Verifica os perfis do usuário
+        boolean ehAluno = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ALUNO"));
+
+        boolean ehInstrutor = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_INSTRUTOR"));
+
+        // Verifica se o aluno é o proprietário do treino
+        boolean alunoAutorizado = ehAluno
+                && treino.getAluno().getEmail().equals(emailUsuario);
+
+        // Verifica se o instrutor é responsável pelo treino
+        boolean instrutorAutorizado = ehInstrutor
+                && treino.getInstrutor().getEmail().equals(emailUsuario);
+
+        // Bloqueia usuários sem permissão
+        if (!alunoAutorizado && !instrutorAutorizado) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Você não tem permissão para gerar a ficha deste treino."
+            );
+        }
+
+        // Consulta os exercícios associados ao treino
+        List<ItemTreino> itens =
+                itemTreinoRepository.findByTreinoIdOrderByOrdemAsc(treinoId);
+        // Armazena o PDF em memória
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        Document documento = new Document();
+
+        try {
+
+            // Associa o documento ao fluxo de saída
+            PdfWriter.getInstance(documento, outputStream);
+
+            // Abre o documento para escrita
+            documento.open();
+
+            // Título da ficha
+            documento.add(new Paragraph("FICHA DE TREINO"));
+            documento.add(new Paragraph(" "));
+
+            // Informações do aluno e do instrutor
+            documento.add(new Paragraph(
+                    "Aluno: " + treino.getAluno().getNome()
+            ));
+
+            documento.add(new Paragraph(
+                    "Instrutor: " + treino.getInstrutor().getNome()
+            ));
+
+            // Informações do treino
+            documento.add(new Paragraph(
+                    "Treino: " + treino.getNome()
+            ));
+
+            documento.add(new Paragraph(
+                    "Objetivo: " + (treino.getObjetivo() != null
+                            ? treino.getObjetivo() : "Não informado")
+            ));
+
+            documento.add(new Paragraph(
+                    "Dia da semana: " + (treino.getDiaDaSemana() != null
+                            ? treino.getDiaDaSemana() : "Não informado")
+            ));
+
+            documento.add(new Paragraph(" "));
+
+            // Cria uma tabela com cinco colunas
+            PdfPTable tabela = new PdfPTable(5);
+            tabela.setWidthPercentage(100);
+
+            // Cabeçalhos da tabela
+            tabela.addCell(new PdfPCell(new Phrase("Ordem")));
+            tabela.addCell(new PdfPCell(new Phrase("Exercício")));
+            tabela.addCell(new PdfPCell(new Phrase("Séries")));
+            tabela.addCell(new PdfPCell(new Phrase("Repetições")));
+            tabela.addCell(new PdfPCell(new Phrase("Carga (kg)")));
+
+            // Adiciona os exercícios do treino
+            for (ItemTreino item : itens) {
+
+                tabela.addCell(String.valueOf(item.getOrdem()));
+
+                tabela.addCell(item.getExercicio().getNome());
+
+                tabela.addCell(String.valueOf(item.getSeries()));
+
+                tabela.addCell(String.valueOf(item.getRepeticoes()));
+
+                tabela.addCell(item.getCarga() != null
+                        ? String.valueOf(item.getCarga())
+                        : "-");
+            }
+
+            // Insere a tabela no documento
+            documento.add(tabela);
+
+            documento.add(new Paragraph(" "));
+
+            // Adiciona as observações dos exercícios
+            documento.add(new Paragraph("OBSERVAÇÕES"));
+
+            for (ItemTreino item : itens) {
+
+                if (item.getObservacoes() != null
+                        && !item.getObservacoes().isBlank()) {
+
+                    documento.add(new Paragraph(
+                            item.getOrdem() + " - "
+                                    + item.getExercicio().getNome()
+                                    + ": " + item.getObservacoes()
+                    ));
+                }
+            }
+
+        } catch (DocumentException e) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Erro ao gerar a ficha de treino em PDF.",
+                    e
+            );
+
+        } finally {
+
+            // Fecha o documento
+            documento.close();
+        }
+
+         // Retorna o PDF como um array de bytes
+        return outputStream.toByteArray();
     }
 }

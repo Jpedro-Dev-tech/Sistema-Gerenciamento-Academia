@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -34,5 +36,24 @@ public class TreinoController {
     public ResponseEntity<List<TreinoRespostaDTO>> visualizarTreino() {
         List<TreinoRespostaDTO> treinos = treinoService.visualizarTreino();
         return ResponseEntity.ok(treinos);
+    }
+    @GetMapping("/{id}/ficha-pdf")
+    public ResponseEntity<byte[]> gerarFichaPDF(@PathVariable Long id) {
+
+        // Solicita ao Service a geração do PDF
+        byte[] pdf = treinoService.gerarFichaPDF(id);
+
+        // Define o nome do arquivo
+        String nomeArquivo = "ficha_treino_" + id + ".pdf";
+
+        // Retorna o arquivo PDF para download
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + nomeArquivo + "\""
+                )
+                .contentType(MediaType.APPLICATION_PDF)
+                .contentLength(pdf.length)
+                .body(pdf);
     }
 }
