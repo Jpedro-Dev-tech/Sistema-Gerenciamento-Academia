@@ -1,5 +1,5 @@
 package dio.sistemagestaoacademia.service;
-
+import org.springframework.security.core.Authentication;
 import dio.sistemagestaoacademia.dto.AvaliacaoCadastroDTO;
 import dio.sistemagestaoacademia.dto.AvaliacaoRespostaDTO;
 import dio.sistemagestaoacademia.entity.Aluno;
@@ -67,6 +67,7 @@ public class AvaliacaoAntropometricaService {
          avaliacao.setCircQuadril(dto.getCircQuadril());
          avaliacao.setCircBraco(dto.getCircBraco());
          avaliacao.setCircCoxa(dto.getCircCoxa());
+         avaliacao.setObservacoes(dto.getObservacoes());
 
          // 5. Salvar a avaliação
          AvaliacaoAntropometrica avaliacaoSalva =
@@ -99,12 +100,51 @@ public class AvaliacaoAntropometricaService {
          resposta.setCircQuadril(avaliacaoSalva.getCircQuadril());
          resposta.setCircBraco(avaliacaoSalva.getCircBraco());
          resposta.setCircCoxa(avaliacaoSalva.getCircCoxa());
+         resposta.setObservacoes(avaliacaoSalva.getObservacoes());
 
          return resposta;
      }
      //Metodo consltarHistorico
     public List<AvaliacaoRespostaDTO> consultarHistorico(Long alunoId) {
+        // Identifica o usuário autenticado
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
+// Verifica se o usuário é aluno
+        boolean ehAluno = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ALUNO"));
+
+// Verifica se o usuário é instrutor
+        boolean ehInstrutor = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_INSTRUTOR"));
+
+// Se for aluno, verifica se está consultando o próprio histórico
+        if (ehAluno) {
+
+            Aluno alunoAutenticado = alunoRepository
+                    .findByEmail(authentication.getName())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.UNAUTHORIZED,
+                            "Aluno autenticado não encontrado."
+                    ));
+
+            if (!alunoAutenticado.getId().equals(alunoId)) {
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "Você não tem permissão para consultar as avaliações deste aluno."
+                );
+            }
+
+// Se não for aluno nem instrutor, bloqueia o acesso
+        } else if (!ehInstrutor) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Usuário sem permissão para consultar avaliações."
+            );
+        }
         // Verifica se o aluno existe
         if (!alunoRepository.existsById(alunoId)) {
             throw new ResponseStatusException(
@@ -147,6 +187,7 @@ public class AvaliacaoAntropometricaService {
             resposta.setCircQuadril(avaliacao.getCircQuadril());
             resposta.setCircBraco(avaliacao.getCircBraco());
             resposta.setCircCoxa(avaliacao.getCircCoxa());
+            resposta.setObservacoes(avaliacao.getObservacoes());
 
             return resposta;
 
