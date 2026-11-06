@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import java.util.List;
 
@@ -63,6 +65,25 @@ public class AvaliacaoAntropometricaService {
 
          // Calcula o percentual de gordura quando as sete dobras estão preenchidas
          avaliacao.setPercentualGordura(avaliacao.calcularPercentualGordura());
+         // Calcula a massa magra com base no percentual de gordura
+         if (avaliacao.getPercentualGordura() != null) {
+
+             BigDecimal percentualGordura =
+                     avaliacao.getPercentualGordura();
+
+             BigDecimal percentualMassaMagra =
+                     BigDecimal.valueOf(100).subtract(percentualGordura);
+
+             BigDecimal massaMagra = avaliacao.getPeso()
+                     .multiply(percentualMassaMagra)
+                     .divide(
+                             BigDecimal.valueOf(100),
+                             2,
+                             RoundingMode.HALF_UP
+                     );
+
+             avaliacao.setMassaMagra(massaMagra);
+         }
          avaliacao.setCircCintura(dto.getCircCintura());
          avaliacao.setCircQuadril(dto.getCircQuadril());
          avaliacao.setCircBraco(dto.getCircBraco());

@@ -178,7 +178,7 @@ public class AvaliacaoAntropometrica {
         } else if ("F".equalsIgnoreCase(aluno.getSexo())) {
 
             densidadeCorporal =
-                    1.097
+                    1.0970
                             - (0.00046971 * soma)
                             + (0.00000056 * soma * soma)
                             - (0.00012828 * idade);
