@@ -8,6 +8,7 @@ import dio.sistemagestaoacademia.entity.Instrutor;
 import dio.sistemagestaoacademia.entity.Treino;
 import dio.sistemagestaoacademia.repository.AlunoRepository;
 import dio.sistemagestaoacademia.repository.InstrutorRepository;
+import dio.sistemagestaoacademia.repository.ItemTreinoRepository;
 import dio.sistemagestaoacademia.repository.TreinoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -23,11 +24,13 @@ public class TreinoService {
     private final TreinoRepository treinoRepository;
     private final AlunoRepository alunoRepository;
     private final InstrutorRepository instrutorRepository;
+    private final ItemTreinoRepository itemTreinoRepository;
 
-    public TreinoService(AlunoRepository alunoRepository, InstrutorRepository instrutorRepository, TreinoRepository treinoRepository) {
+    public TreinoService(AlunoRepository alunoRepository, InstrutorRepository instrutorRepository, TreinoRepository treinoRepository, ItemTreinoRepository itemTreinoRepository) {
         this.alunoRepository = alunoRepository;
         this.instrutorRepository = instrutorRepository;
         this.treinoRepository = treinoRepository;
+        this.itemTreinoRepository = itemTreinoRepository;
     }
     public TreinoRespostaDTO criarTreino(TreinoCadastroDTO dto) {
         Aluno aluno = alunoRepository.findById(dto.getAlunoId())
