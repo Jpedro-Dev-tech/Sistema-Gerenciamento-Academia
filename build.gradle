@@ -20,6 +20,8 @@ repositories {
 dependencies {
     // Spring Web MVC
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    // Geração de fichas de treino em PDF
+    implementation 'com.github.librepdf:openpdf:2.0.5'
 
     // Spring Data JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
