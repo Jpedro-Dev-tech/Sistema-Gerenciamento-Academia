@@ -32,8 +32,3 @@ public class AvaliacaoRespostaDTO {
     private String observacoes;
 
 }
-/**
- * Por que precisamos desse DTO?
- *
- * Assim como fizemos com as demais classes DTO, ele permite controlar os dados retornados pela API.
- */

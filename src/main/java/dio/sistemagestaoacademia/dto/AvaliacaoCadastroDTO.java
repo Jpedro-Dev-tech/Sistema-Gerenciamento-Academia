@@ -31,4 +31,5 @@ public class AvaliacaoCadastroDTO {
     private BigDecimal circQuadril;
     private BigDecimal circBraco;
     private BigDecimal circCoxa;
+    private String observacoes;
 }
