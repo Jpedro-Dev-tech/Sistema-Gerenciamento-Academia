@@ -16,6 +16,7 @@ public class AvaliacaoRespostaDTO {
     private BigDecimal peso;
     private BigDecimal altura;
     private BigDecimal imc;
+    private String classificacaoIMC;
     private BigDecimal percentualGordura;
     private BigDecimal massaMagra;
     private BigDecimal dobraTriceps;

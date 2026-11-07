@@ -105,6 +105,7 @@ public class AvaliacaoAntropometricaService {
          resposta.setPeso(avaliacaoSalva.getPeso());
          resposta.setAltura(avaliacaoSalva.getAltura());
          resposta.setImc(avaliacaoSalva.getImc());
+         resposta.setClassificacaoIMC(classificarIMC(avaliacaoSalva.getImc()));
 
          resposta.setPercentualGordura(avaliacaoSalva.getPercentualGordura());
          resposta.setMassaMagra(avaliacaoSalva.getMassaMagra());
@@ -192,6 +193,7 @@ public class AvaliacaoAntropometricaService {
             resposta.setPeso(avaliacao.getPeso());
             resposta.setAltura(avaliacao.getAltura());
             resposta.setImc(avaliacao.getImc());
+            resposta.setClassificacaoIMC(classificarIMC(avaliacao.getImc()));
 
             resposta.setPercentualGordura(avaliacao.getPercentualGordura());
             resposta.setMassaMagra(avaliacao.getMassaMagra());
@@ -245,5 +247,25 @@ public class AvaliacaoAntropometricaService {
 
         // 5. Consulta o histórico do próprio aluno
         return consultarHistorico(aluno.getId());
+    }
+    // RN10 - Classificação do IMC
+    private String classificarIMC(BigDecimal imc) {
+
+        if (imc == null) {
+            return null;
+        }
+
+        if (imc.compareTo(new BigDecimal("18.5")) < 0) {
+            return "Abaixo do peso";
+
+        } else if (imc.compareTo(new BigDecimal("25.0")) < 0) {
+            return "Peso normal";
+
+        } else if (imc.compareTo(new BigDecimal("30.0")) < 0) {
+            return "Sobrepeso";
+
+        } else {
+            return "Obesidade";
+        }
     }
 }
