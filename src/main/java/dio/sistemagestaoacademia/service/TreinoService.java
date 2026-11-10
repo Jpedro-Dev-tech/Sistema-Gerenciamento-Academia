@@ -37,6 +37,7 @@ public class TreinoService {
     private final AlunoRepository alunoRepository;
     private final InstrutorRepository instrutorRepository;
     private final ItemTreinoRepository itemTreinoRepository;
+    private Boolean ativo;
 
     public TreinoService(AlunoRepository alunoRepository, InstrutorRepository instrutorRepository, TreinoRepository treinoRepository, ItemTreinoRepository itemTreinoRepository) {
         this.alunoRepository = alunoRepository;
@@ -121,7 +122,10 @@ public class TreinoService {
         treino.setDescricao(dto.getDescricao());
         treino.setObjetivo(dto.getObjetivo());
         treino.setDiaDaSemana(dto.getDiaDaSemana());
-
+        // Atualiza o estado do treino somente se informado no DTO
+        if (dto.getAtivo() != null) {
+            treino.setAtivo(dto.getAtivo());
+        }
         // Registra a data e o horário da atualização
         treino.setDataAtualizacao(LocalDateTime.now());
 
