@@ -17,10 +17,30 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+
+                        // Cadastro de alunos e instrutores
                         .requestMatchers(HttpMethod.POST, "/api/alunos").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/instrutores").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/instrutores/login").permitAll()
+
+                        // Somente instrutores podem criar e alterar treinos
+                        .requestMatchers(HttpMethod.POST, "/api/treinos")
+                        .hasRole("INSTRUTOR")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/treinos/*")
+                        .hasRole("INSTRUTOR")
+
+                        // Somente alunos podem consultar seus próprios treinos
+                        .requestMatchers(HttpMethod.GET, "/api/treinos/meus-treinos")
+                        .hasRole("ALUNO")
+
+                        // Alunos e instrutores podem solicitar fichas em PDF
+                        .requestMatchers(HttpMethod.GET, "/api/treinos/*/ficha-pdf")
+                        .hasAnyRole("ALUNO", "INSTRUTOR")
+
+                        // Demais endpoints exigem autenticação
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
@@ -28,11 +48,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-/**
- * | Configuração                   | Significado                                          |
- * | ------------------------------ | ---------------------------------------------------- |
- * | `POST /api/alunos`             | Permite cadastrar alunos sem autenticação            |
- * | `POST /api/instrutores/login`  | Permite acessar o endpoint de login sem autenticação |
- * | `anyRequest().authenticated()` | Exige autenticação nas demais requisições            |
- * | `httpBasic()`                  | Habilita autenticação HTTP Basic                     |
- */
