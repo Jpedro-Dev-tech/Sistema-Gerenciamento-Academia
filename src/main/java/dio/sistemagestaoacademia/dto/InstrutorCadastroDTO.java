@@ -26,7 +26,8 @@ public class InstrutorCadastroDTO {
     @Size(max = 20, message = "O telefone deve ter no máximo 20 caracteres")
     private String telefone;
 
-    @Size(max = 30, message = "O registro profissional deve ter no máximo 30 caracteres")
+    @NotBlank(message = "O registro profissional é obrigatório")
+    @Size(max = 150, message = "O registro profissional deve ter no máximo 150 caracteres")
     private String registroProfissional;
 
     @NotBlank(message = "O código de autorização é obrigatório")
