@@ -3,7 +3,6 @@ package dio.sistemagestaoacademia.controller;
 import dio.sistemagestaoacademia.dto.ExercicioAtualizacaoDTO;
 import dio.sistemagestaoacademia.dto.ExercicioCadastroDTO;
 import dio.sistemagestaoacademia.dto.ExercicioRespostaDTO;
-import dio.sistemagestaoacademia.entity.Exercicio;
 import dio.sistemagestaoacademia.service.ExercicioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -38,7 +37,7 @@ public class ExercicioController {
         return ResponseEntity.ok(exercicios);
     }
     @PutMapping("/{id}")//Define o endpoint responsável por atualizar um exercício existente.
-    public ResponseEntity<ExercicioRespostaDTO> atulizarExercicio(@PathVariable Long id, @RequestBody ExercicioAtualizacaoDTO dto) {
+    public ResponseEntity<ExercicioRespostaDTO> atulizarExercicio(@Valid @PathVariable Long id, @RequestBody ExercicioAtualizacaoDTO dto) {
         ExercicioRespostaDTO exercicio = exercicioService.atualizarExercicio(id, dto);
         return ResponseEntity.ok(exercicio);
     }
