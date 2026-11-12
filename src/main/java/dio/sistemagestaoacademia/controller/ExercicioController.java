@@ -5,6 +5,7 @@ import dio.sistemagestaoacademia.dto.ExercicioCadastroDTO;
 import dio.sistemagestaoacademia.dto.ExercicioRespostaDTO;
 import dio.sistemagestaoacademia.entity.Exercicio;
 import dio.sistemagestaoacademia.service.ExercicioService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class ExercicioController {
         this.exercicioService = exercicioService;
     }
     @PostMapping
-    public ResponseEntity<ExercicioRespostaDTO> cadastrarExercicio(@RequestBody ExercicioCadastroDTO dto) {
+    public ResponseEntity<ExercicioRespostaDTO> cadastrarExercicio(@Valid @RequestBody ExercicioCadastroDTO dto) {
         ExercicioRespostaDTO exercicio = exercicioService.cadastrarExercicio(dto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
