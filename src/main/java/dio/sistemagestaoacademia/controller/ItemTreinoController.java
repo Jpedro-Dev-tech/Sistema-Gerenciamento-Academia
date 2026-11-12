@@ -2,6 +2,7 @@ package dio.sistemagestaoacademia.controller;
 import dio.sistemagestaoacademia.dto.ItemTreinoCadastroDTO;
 import dio.sistemagestaoacademia.dto.ItemTreinoRespostaDTO;
 import dio.sistemagestaoacademia.service.ItemTreinoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class ItemTreinoController {
         this.itemTreinoService = itemTreinoService;
     }
     @PostMapping
-    public ResponseEntity<ItemTreinoRespostaDTO> adicionarExercicio(@RequestBody ItemTreinoCadastroDTO dto){
+    public ResponseEntity<ItemTreinoRespostaDTO> adicionarExercicio(@Valid @RequestBody ItemTreinoCadastroDTO dto){
          ItemTreinoRespostaDTO resposta = itemTreinoService.adicionarExercicio(dto);
          return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
