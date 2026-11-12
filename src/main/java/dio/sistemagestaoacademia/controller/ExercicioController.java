@@ -37,7 +37,7 @@ public class ExercicioController {
         return ResponseEntity.ok(exercicios);
     }
     @PutMapping("/{id}")//Define o endpoint responsável por atualizar um exercício existente.
-    public ResponseEntity<ExercicioRespostaDTO> atulizarExercicio(@Valid @PathVariable Long id, @RequestBody ExercicioAtualizacaoDTO dto) {
+    public ResponseEntity<ExercicioRespostaDTO> atulizarExercicio(@PathVariable Long id, @Valid @RequestBody ExercicioAtualizacaoDTO dto) {
         ExercicioRespostaDTO exercicio = exercicioService.atualizarExercicio(id, dto);
         return ResponseEntity.ok(exercicio);
     }
